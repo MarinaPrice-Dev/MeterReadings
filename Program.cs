@@ -1,0 +1,68 @@
+using MeterReadings.Data;
+using MeterReadings.Repositories;
+using MeterReadings.Repositories.SeedData;
+using MeterReadings.Services;
+using Microsoft.EntityFrameworkCore;
+
+namespace MeterReadings;
+
+public class Program
+{
+    public static async Task Main(string[] args)
+    {
+        var builder = WebApplication.CreateBuilder(args);
+        
+        var connectionString = builder.Configuration.GetConnectionString("DefaultConnection") ??
+                               throw new InvalidOperationException("Connection string 'DefaultConnection' not found.");
+        builder.Services.AddDbContext<ApplicationDbContext>(options =>
+            options.UseSqlServer(connectionString));
+        
+        // Register services
+        builder.Services.AddScoped<IWeatherForecastService, WeatherForecastService>();
+        builder.Services.AddScoped<ICsvParserService, CsvParserService>();
+        // Register repositories
+        builder.Services.AddScoped<IAccountRepository, AccountRepository>();
+        builder.Services.AddScoped<IDataSeeder, TestAccountSeeder>();
+        
+        builder.Services.AddControllers();
+        builder.Services.AddEndpointsApiExplorer();
+        builder.Services.AddSwaggerGen();
+
+        var app = builder.Build();
+
+        // Configure middleware
+        if (app.Environment.IsDevelopment())
+        {
+            app.UseSwagger();
+            app.UseSwaggerUI();
+        }
+
+        app.UseHttpsRedirection();
+        app.UseAuthorization();
+        app.MapControllers();
+        
+        ApplyMigrations(app);
+        await SeedDatabaseAsync(app);
+        
+        app.Run();
+    }
+
+    private static void ApplyMigrations(WebApplication app)
+    {
+        using (var scope = app.Services.CreateScope())
+        {
+            var db = scope.ServiceProvider.GetRequiredService<ApplicationDbContext>();
+            db.Database.Migrate();
+        }
+    }
+
+    private static async Task SeedDatabaseAsync(WebApplication app)
+    {
+        if (app.Environment.IsDevelopment())
+        {
+            using var scope = app.Services.CreateScope();
+            var seeder = scope.ServiceProvider.GetRequiredService<IDataSeeder>();
+            await seeder.SeedAsync();
+        }
+    }
+}
