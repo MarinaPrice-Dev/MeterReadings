@@ -31,7 +31,8 @@ public class Program
         builder.Services.AddControllers();
         builder.Services.AddEndpointsApiExplorer();
         builder.Services.AddSwaggerGen();
-
+        SetupCorsPolicy(builder);
+        
         var app = builder.Build();
 
         // Configure middleware
@@ -41,6 +42,7 @@ public class Program
             app.UseSwaggerUI();
         }
 
+        app.UseCors("AllowFrontend"); 
         app.UseHttpsRedirection();
         app.UseAuthorization();
         app.MapControllers();
@@ -49,6 +51,19 @@ public class Program
         await SeedDatabaseAsync(app);
         
         app.Run();
+    }
+
+    private static void SetupCorsPolicy(WebApplicationBuilder builder)
+    {
+        builder.Services.AddCors(options =>
+        {
+            options.AddPolicy("AllowFrontend", policy =>
+            {
+                policy.WithOrigins("http://localhost:5173") // Vue dev server
+                    .AllowAnyHeader()
+                    .AllowAnyMethod();
+            });
+        });
     }
 
     private static void ApplyMigrations(WebApplication app)

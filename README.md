@@ -17,6 +17,16 @@ Setup your database connection string inside user secrets:
 
 Replace **[your password]** with the same password as above
 
+## UI setup
+cd .\meterreadings-ui\\\
+npm ci\
+npm run dev\
+Go to: ` http://localhost:5173/`
+
+### Creating prod ready UI !todo!
+npm run build\
+
+
 ## Starting the project
 ### Docker
 Run `docker compose up -d`
@@ -25,24 +35,31 @@ Run `docker compose up -d`
 ## Swagger Api Documentation
 
 Available here:
-http://localhost:5272/swagger
+http://localhost:8080/swagger
 
 
 ## Add migrations
-- dotnet ef migrations add InitialCreate
-- dotnet ef database update
-- run project (to apply migrations and seeds db)
+dotnet ef migrations add InitialCreate\
+dotnet ef database update\
+run project (to apply migrations and seeds db)\
 
 # todo
 - automapper for dtos
-- update .http file
 - tests (unit, integration)
 - basic ui for uploads
 - test 8081 in docker (or just remove)
 - remove date mapping code
+- add ui to docker
 
 
 # Decisions made
+
+## Need caching
+Too many calls to the database in MeterReadingValidator.ValidateReading.\ 
+Lots of repeated calls too. We really would benefit from caching, but need to consider the best way to handle data integrity issues.
+
+## Saving meter readings
+Save individually or as a range? Doing it as a range would break the current validation method.
 
 ## Primary keys in database
 Rather than using AccountId as the primary key, a separate int ID primary key has been added.
@@ -57,5 +74,3 @@ For this application, Accounts cannot be deleted if they have meter readings aga
 
 For a production ready app, we should think about whether we want cascade deletes, or if we intend to keep data for archiving purposes, whether soft deletes should be considered, etc.
 
-## Saving meter readings indivudually
-Talk about why we don't save as range

@@ -27,22 +27,28 @@ namespace MeterReadings.Services
             {
                 //csv.Context.RegisterClassMap<MeterReadingCsvDtoMap>();
                 var csvRecords = csv.GetRecords<MeterReadingCsvDto>().ToList();
+                var validReadings = new List<MeterReading>();
                 
                 csvRecords.ForEach(csvRecord =>
                 {
                     if (_validator.ValidateReading(csvRecord, result).Result)
                     {
-                        var validReading = new MeterReading
+                        validReadings.Add(new MeterReading
                         {
                             AccountId = csvRecord.AccountId,
                             MeterReadingDateTime = DateTime.Parse(csvRecord.MeterReadingDateTime),
                             MeterReadValue = csvRecord.MeterReadValue
-                        };
+                        });
 
-                        //_repository.AddAsync(validReading);
-                        //_repository.SaveChangesAsync();
+                        // works better with validation
+                        //await _repository.AddAsync(validReading);
+                        //await _repository.SaveChangesAsync();
                     }
                 });
+
+                // faster, but breaks how we do validation
+                // await _repository.AddRangeAsync(validReadings);
+                // await _repository.SaveChangesAsync();
 
             }
             catch (Exception e)
@@ -52,14 +58,5 @@ namespace MeterReadings.Services
 
             return result;
         }
-
-        // private void Validate()
-        // {
-        //     if (!DateTime.TryParseExact(dto.MeterReadingDateTime, "dd/MM/yyyy HH:mm", CultureInfo.InvariantCulture, DateTimeStyles.None, out var parsedDate))
-        //     {
-        //         result.Errors.Add($"Invalid date format for account {dto.AccountId}: {dto.MeterReadingDateTime}");
-        //         continue;
-        //     }
-        // }
     }
 }
