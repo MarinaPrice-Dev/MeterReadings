@@ -1,4 +1,4 @@
-﻿namespace MeterReadings.Models.DTO;
+﻿namespace MeterReadings.Models.Dto;
 
 public class AccountCsvDto
 {

@@ -1,8 +1,7 @@
-﻿using MeterReadings.Models;
-using CsvHelper;
+﻿using CsvHelper;
 using System.Globalization;
-using MeterReadings.Models.Data;
-using MeterReadings.Models.DTO;
+using MeterReadings.Models.Dto;
+using MeterReadings.Models.Entities;
 
 namespace MeterReadings.Services;
 

@@ -2,6 +2,7 @@ using MeterReadings.Data;
 using MeterReadings.Repositories;
 using MeterReadings.Repositories.SeedData;
 using MeterReadings.Services;
+using MeterReadings.Services.Validation;
 using Microsoft.EntityFrameworkCore;
 
 namespace MeterReadings;
@@ -20,8 +21,11 @@ public class Program
         // Register services
         builder.Services.AddScoped<IWeatherForecastService, WeatherForecastService>();
         builder.Services.AddScoped<ICsvParserService, CsvParserService>();
+        builder.Services.AddScoped<IMeterReadingService, MeterReadingService>();
+        builder.Services.AddScoped<IMeterReadingValidator, MeterReadingValidator>();
         // Register repositories
         builder.Services.AddScoped<IAccountRepository, AccountRepository>();
+        builder.Services.AddScoped<IMeterReadingRepository, MeterReadingRepository>();
         builder.Services.AddScoped<IDataSeeder, TestAccountSeeder>();
         
         builder.Services.AddControllers();

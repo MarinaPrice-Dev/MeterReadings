@@ -1,5 +1,5 @@
 ﻿using MeterReadings.Models;
-using MeterReadings.Models.Data;
+using MeterReadings.Models.Entities;
 
 namespace MeterReadings.Services;
 

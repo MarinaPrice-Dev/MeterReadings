@@ -1,6 +1,7 @@
 ﻿using MeterReadings.Data;
 using MeterReadings.Models;
-using MeterReadings.Models.Data;
+using MeterReadings.Models.Entities;
+using Microsoft.EntityFrameworkCore;
 
 namespace MeterReadings.Repositories;
 
@@ -20,5 +21,11 @@ public class AccountRepository : IAccountRepository
             await _context.Accounts.AddRangeAsync(accounts);
             await _context.SaveChangesAsync();
         }
+    }
+    
+    public async Task<bool> ExistsAsync(int accountId)
+    {
+        return await _context.Accounts
+            .AnyAsync(a => a.AccountId == accountId);
     }
 }
