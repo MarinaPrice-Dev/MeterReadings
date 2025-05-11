@@ -11,12 +11,15 @@ namespace MeterReadings.Services
     {
         private readonly IMeterReadingValidator _validator;
         private readonly IMeterReadingRepository _repository;
+        private readonly IAccountRepository _accountRepository;
         
-        public MeterReadingService(IMeterReadingValidator validator, IMeterReadingRepository repository)
+        public MeterReadingService(IMeterReadingValidator validator, IMeterReadingRepository repository, IAccountRepository accountRepository)
         {
             _validator = validator;
             _repository = repository;
+            _accountRepository = accountRepository;
         }
+        
         public async Task<MeterReadingUploadResultDto> UploadMeterReadingsAsync(IFormFile file)
         {
             using var reader = new StreamReader(file.OpenReadStream());
@@ -27,11 +30,16 @@ namespace MeterReadings.Services
             {
                 //csv.Context.RegisterClassMap<MeterReadingCsvDtoMap>();
                 var csvRecords = csv.GetRecords<MeterReadingCsvDto>().ToList();
+                //RemoveDuplicatesFromCsvData(csvRecords); //todo
                 var validReadings = new List<MeterReading>();
+                
+                var distinctAccountIds = csvRecords.Select(r => r.AccountId).Distinct().ToList();
+                var latestReadingsStored = await _repository.GetLatestReadingsForAccountsAsync(distinctAccountIds);
+                var validAccounts = await _accountRepository.GetValidAccountsAsync(distinctAccountIds);
                 
                 csvRecords.ForEach(csvRecord =>
                 {
-                    if (_validator.ValidateReading(csvRecord, result).Result)
+                    if (_validator.ValidateReading(csvRecord, result, validAccounts, latestReadingsStored))
                     {
                         validReadings.Add(new MeterReading
                         {
@@ -40,23 +48,29 @@ namespace MeterReadings.Services
                             MeterReadValue = csvRecord.MeterReadValue
                         });
 
-                        // works better with validation
+                        // too slow
                         //await _repository.AddAsync(validReading);
                         //await _repository.SaveChangesAsync();
                     }
                 });
 
-                // faster, but breaks how we do validation
+                // better
                 // await _repository.AddRangeAsync(validReadings);
                 // await _repository.SaveChangesAsync();
 
+                CalculateFailedReadings(result, csvRecords);
             }
             catch (Exception e)
             {
                 result.Errors.Add(e.Message);
             }
-
+            
             return result;
+        }
+
+        private void CalculateFailedReadings(MeterReadingUploadResultDto result, List<MeterReadingCsvDto> csvRecords)
+        {
+            result.FailedReadings = csvRecords.Count - result.SuccessfulReadings;
         }
     }
 }

@@ -9,5 +9,6 @@ namespace MeterReadings.Repositories
         Task AddAsync(MeterReading reading);
         Task SaveChangesAsync();
         Task<DateTime?> GetMostRecentReadingDateAsync(int accountId);
+        Task<List<MeterReading>> GetLatestReadingsForAccountsAsync(List<int> accountIds);
     }
 }

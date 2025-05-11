@@ -40,5 +40,17 @@ namespace MeterReadings.Repositories
                 .Where(m => m.AccountId == accountId)
                 .MaxAsync(m => (DateTime?)m.MeterReadingDateTime);
         }
+        
+        public async Task<List<MeterReading>> GetLatestReadingsForAccountsAsync(List<int> accountIds)
+        {
+            return await _context.MeterReadings
+                .Where(r => accountIds.Contains(r.AccountId))
+                .GroupBy(r => r.AccountId)
+                .Select(g => g
+                    .OrderByDescending(r => r.MeterReadingDateTime)
+                    .First())
+                .ToListAsync();
+        }
+
     }
 }

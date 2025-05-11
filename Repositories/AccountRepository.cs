@@ -28,4 +28,11 @@ public class AccountRepository : IAccountRepository
         return await _context.Accounts
             .AnyAsync(a => a.AccountId == accountId);
     }
+    
+    public async Task<List<Account>> GetValidAccountsAsync(List<int> accountIds)
+    {
+        return await _context.Accounts
+            .Where(a => accountIds.Contains(a.AccountId))
+            .ToListAsync();
+    }
 }
