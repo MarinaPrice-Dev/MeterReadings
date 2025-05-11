@@ -6,7 +6,7 @@
       dockerfile: Dockerfile
     environment:
       - ASPNETCORE_ENVIRONMENT=Development
-      - ConnectionStrings__DefaultConnection=Server=sqlserver,1433;Database=MeterReadingsDb;User Id=sac;Password=${SA_PASSWORD};
+      - ConnectionStrings__DefaultConnection=Server=sqlserver,1433;Database=MeterReadingsDb;User Id=sa;Password=${SA_PASSWORD};TrustServerCertificate=True;
       - APP_UID=1000
     ports:
       - "8080:8080"

@@ -80,6 +80,7 @@ namespace MeterReadings.Migrations
                     b.HasOne("MeterReadings.Models.Entities.Account", "Account")
                         .WithMany()
                         .HasForeignKey("AccountId")
+                        .HasPrincipalKey("AccountId")
                         .OnDelete(DeleteBehavior.Restrict)
                         .IsRequired();
 

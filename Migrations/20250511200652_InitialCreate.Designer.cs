@@ -12,8 +12,8 @@ using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 namespace MeterReadings.Migrations
 {
     [DbContext(typeof(ApplicationDbContext))]
-    [Migration("20250509133346_AddMeterReadingEntity")]
-    partial class AddMeterReadingEntity
+    [Migration("20250511200652_InitialCreate")]
+    partial class InitialCreate
     {
         /// <inheritdoc />
         protected override void BuildTargetModel(ModelBuilder modelBuilder)
@@ -83,6 +83,7 @@ namespace MeterReadings.Migrations
                     b.HasOne("MeterReadings.Models.Entities.Account", "Account")
                         .WithMany()
                         .HasForeignKey("AccountId")
+                        .HasPrincipalKey("AccountId")
                         .OnDelete(DeleteBehavior.Restrict)
                         .IsRequired();
 

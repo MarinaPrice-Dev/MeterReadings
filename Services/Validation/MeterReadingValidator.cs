@@ -6,6 +6,11 @@ namespace MeterReadings.Services.Validation
 {
     public class MeterReadingValidator : IMeterReadingValidator
     {
+        private readonly IDateTimeParser _dateTimeParser;
+        public MeterReadingValidator(IDateTimeParser dateTimeParser)
+        {
+            _dateTimeParser = dateTimeParser;
+        }
         public bool ValidateReading(
             MeterReadingCsvDto meterReadingCsvRow, 
             MeterReadingUploadResultDto uploadResults, 
@@ -26,7 +31,7 @@ namespace MeterReadings.Services.Validation
                 hasErrors = true;
             }
             
-            if (!DateTime.TryParse(meterReadingCsvRow.MeterReadingDateTime, out var parsedDate))
+            if(!_dateTimeParser.TryParseBritishDateTime(meterReadingCsvRow.MeterReadingDateTime, out var parsedDate))
             {
                 uploadResults.Errors.Add($"Invalid date format '{meterReadingCsvRow.MeterReadingDateTime}' for account {meterReadingCsvRow.AccountId}.");
                 hasErrors = true;

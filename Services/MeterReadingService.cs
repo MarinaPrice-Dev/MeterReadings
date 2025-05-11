@@ -32,10 +32,10 @@ namespace MeterReadings.Services
                 var validReadings = new List<MeterReading>();
                 
                 var distinctAccountIds = csvRecords.Select(r => r.AccountId).Distinct().ToList();
-                var latestReadingsStored = await _repository.GetLatestReadingsForAccountsAsync(distinctAccountIds);
                 var validAccounts = await _accountRepository.GetValidAccountsAsync(distinctAccountIds);
+                var latestReadingsStored = await _repository.GetLatestReadingsForAccountsAsync(distinctAccountIds);
                 
-                csvRecords.ForEach(csvRecord =>
+                foreach (var csvRecord in csvRecords)
                 {
                     if (_validator.ValidateReading(csvRecord, result, validAccounts, latestReadingsStored))
                     {
@@ -45,26 +45,20 @@ namespace MeterReadings.Services
                             MeterReadingDateTime = DateTime.Parse(csvRecord.MeterReadingDateTime),
                             MeterReadValue = csvRecord.MeterReadValue
                         });
-
-                        // too slow
-                        //await _repository.AddAsync(validReading);
-                        //await _repository.SaveChangesAsync();
                     }
-                });
-
-                // better
-                // await _repository.AddRangeAsync(validReadings);
-                // await _repository.SaveChangesAsync();
+                }
 
                 result.FailedReadings = csvRecords.Count - validReadings.Count;
+
+                await _repository.AddRangeAsync(validReadings);
+                await _repository.SaveChangesAsync();
             }
             catch (Exception e)
             {
-                result.Errors.Add(e.Message);
+                result.Errors.Add($"{e.Message}, {e.InnerException}");
             }
             
             return result;
         }
-        
     }
 }

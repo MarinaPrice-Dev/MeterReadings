@@ -6,11 +6,27 @@ using Microsoft.EntityFrameworkCore.Migrations;
 namespace MeterReadings.Migrations
 {
     /// <inheritdoc />
-    public partial class AddMeterReadingEntity : Migration
+    public partial class InitialCreate : Migration
     {
         /// <inheritdoc />
         protected override void Up(MigrationBuilder migrationBuilder)
         {
+            migrationBuilder.CreateTable(
+                name: "Accounts",
+                columns: table => new
+                {
+                    Id = table.Column<int>(type: "int", nullable: false)
+                        .Annotation("SqlServer:Identity", "1, 1"),
+                    AccountId = table.Column<int>(type: "int", nullable: false),
+                    FirstName = table.Column<string>(type: "nvarchar(max)", nullable: false),
+                    LastName = table.Column<string>(type: "nvarchar(max)", nullable: false)
+                },
+                constraints: table =>
+                {
+                    table.PrimaryKey("PK_Accounts", x => x.Id);
+                    table.UniqueConstraint("AK_Accounts_AccountId", x => x.AccountId);
+                });
+
             migrationBuilder.CreateTable(
                 name: "MeterReadings",
                 columns: table => new
@@ -28,9 +44,15 @@ namespace MeterReadings.Migrations
                         name: "FK_MeterReadings_Accounts_AccountId",
                         column: x => x.AccountId,
                         principalTable: "Accounts",
-                        principalColumn: "Id",
+                        principalColumn: "AccountId",
                         onDelete: ReferentialAction.Restrict);
                 });
+
+            migrationBuilder.CreateIndex(
+                name: "IX_Accounts_AccountId",
+                table: "Accounts",
+                column: "AccountId",
+                unique: true);
 
             migrationBuilder.CreateIndex(
                 name: "IX_MeterReadings_AccountId",
@@ -43,6 +65,9 @@ namespace MeterReadings.Migrations
         {
             migrationBuilder.DropTable(
                 name: "MeterReadings");
+
+            migrationBuilder.DropTable(
+                name: "Accounts");
         }
     }
 }

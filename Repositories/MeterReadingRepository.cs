@@ -23,6 +23,15 @@ namespace MeterReadings.Repositories
                     .First())
                 .ToListAsync();
         }
+        
+        public async Task AddRangeAsync(IEnumerable<MeterReading> readings)
+        {
+            await _context.MeterReadings.AddRangeAsync(readings);
+        }
 
+        public async Task SaveChangesAsync()
+        {
+            await _context.SaveChangesAsync();
+        }
     }
 }

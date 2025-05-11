@@ -28,7 +28,8 @@ public class ApplicationDbContext : DbContext
             .HasOne(m => m.Account)
             .WithMany()
             .HasForeignKey(m => m.AccountId)
-            .OnDelete(DeleteBehavior.Restrict); 
+            .HasPrincipalKey(a => a.AccountId)
+            .OnDelete(DeleteBehavior.Restrict);
 
         modelBuilder.Entity<MeterReading>()
             .Property(m => m.MeterReadValue)

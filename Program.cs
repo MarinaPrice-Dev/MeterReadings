@@ -1,3 +1,4 @@
+using System.Globalization;
 using MeterReadings.Data;
 using MeterReadings.Repositories;
 using MeterReadings.Repositories.SeedData;
@@ -13,6 +14,10 @@ public class Program
     {
         var builder = WebApplication.CreateBuilder(args);
         
+        var cultureInfo = new CultureInfo("en-GB");
+        CultureInfo.DefaultThreadCurrentCulture = cultureInfo;
+        CultureInfo.DefaultThreadCurrentUICulture = cultureInfo;
+        
         var connectionString = builder.Configuration.GetConnectionString("DefaultConnection") ??
                                throw new InvalidOperationException("Connection string 'DefaultConnection' not found.");
         builder.Services.AddDbContext<ApplicationDbContext>(options =>
@@ -22,6 +27,7 @@ public class Program
         builder.Services.AddScoped<ICsvParserService, CsvParserService>();
         builder.Services.AddScoped<IMeterReadingService, MeterReadingService>();
         builder.Services.AddScoped<IMeterReadingValidator, MeterReadingValidator>();
+        builder.Services.AddScoped<IDateTimeParser, DateTimeParser>();
         // Register repositories
         builder.Services.AddScoped<IAccountRepository, AccountRepository>();
         builder.Services.AddScoped<IMeterReadingRepository, MeterReadingRepository>();
