@@ -19,7 +19,6 @@ public class Program
             options.UseSqlServer(connectionString));
         
         // Register services
-        builder.Services.AddScoped<IWeatherForecastService, WeatherForecastService>();
         builder.Services.AddScoped<ICsvParserService, CsvParserService>();
         builder.Services.AddScoped<IMeterReadingService, MeterReadingService>();
         builder.Services.AddScoped<IMeterReadingValidator, MeterReadingValidator>();
