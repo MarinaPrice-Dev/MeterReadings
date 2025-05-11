@@ -23,12 +23,6 @@ public class AccountRepository : IAccountRepository
         }
     }
     
-    public async Task<bool> ExistsAsync(int accountId)
-    {
-        return await _context.Accounts
-            .AnyAsync(a => a.AccountId == accountId);
-    }
-    
     public async Task<List<Account>> GetValidAccountsAsync(List<int> accountIds)
     {
         return await _context.Accounts

@@ -1,7 +1,6 @@
 ﻿using System.Text.RegularExpressions;
 using MeterReadings.Models.Dto;
 using MeterReadings.Models.Entities;
-using MeterReadings.Repositories;
 
 namespace MeterReadings.Services.Validation
 {

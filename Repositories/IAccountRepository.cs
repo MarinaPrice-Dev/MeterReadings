@@ -6,6 +6,5 @@ namespace MeterReadings.Repositories;
 public interface IAccountRepository
 {
     Task SeedAccountsAsync(List<Account> accounts);
-    Task<bool> ExistsAsync(int accountId);
     Task<List<Account>> GetValidAccountsAsync(List<int> accountIds);
 }

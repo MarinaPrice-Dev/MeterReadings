@@ -5,9 +5,11 @@
     <button @click="uploadFile" :disabled="!file">Upload</button>
 
     <div v-if="result">
+        <br/>
+      <p><strong>Total Rows Processed:</strong> {{ result.successfulReadings + result.failedReadings }}</p>
       <p><strong>Success:</strong> {{ result.successfulReadings }}</p>
       <p><strong>Failed:</strong> {{ result.failedReadings }}</p>
-      <p><strong>Errors:</strong></p>
+      <p><strong>Errors found:</strong></p>
       <ul v-if="result.errors && result.errors.length > 0">
         <li v-for="(error, index) in result.errors" :key="index" style="color: red">
           {{ error }}
@@ -51,5 +53,13 @@ async function uploadFile() {
   padding: 1rem;
   border: 1px solid #ccc;
   border-radius: 8px;
+}
+
+strong, h2 {
+    font-weight: 600;
+}
+
+h2 {
+    margin-bottom: 5px;;
 }
 </style>

@@ -28,9 +28,7 @@ namespace MeterReadings.Services
 
             try
             {
-                //csv.Context.RegisterClassMap<MeterReadingCsvDtoMap>();
                 var csvRecords = csv.GetRecords<MeterReadingCsvDto>().ToList();
-                //RemoveDuplicatesFromCsvData(csvRecords); //todo
                 var validReadings = new List<MeterReading>();
                 
                 var distinctAccountIds = csvRecords.Select(r => r.AccountId).Distinct().ToList();
@@ -58,7 +56,7 @@ namespace MeterReadings.Services
                 // await _repository.AddRangeAsync(validReadings);
                 // await _repository.SaveChangesAsync();
 
-                CalculateFailedReadings(result, csvRecords);
+                result.FailedReadings = csvRecords.Count - validReadings.Count;
             }
             catch (Exception e)
             {
@@ -67,10 +65,6 @@ namespace MeterReadings.Services
             
             return result;
         }
-
-        private void CalculateFailedReadings(MeterReadingUploadResultDto result, List<MeterReadingCsvDto> csvRecords)
-        {
-            result.FailedReadings = csvRecords.Count - result.SuccessfulReadings;
-        }
+        
     }
 }
