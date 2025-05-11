@@ -32,6 +32,10 @@ http://localhost:8080/swagger
 
 # Discussions points
 
+## Small woopsie!
+The powerpoint wanted the POST endpoint to be in format `meter-reading-uploads`
+I didn't notice until the very end, I used `MeterReadingUpload`. Not much point in changing it this late, but its a simple change
+
 ## Large scale system issues
 The data in this task is pretty miniscule. In a real world scenario, how much data is being inserted and how frequently?
 We may need to consider the following situations for scaling and speed issues:
@@ -46,6 +50,7 @@ We may need to consider the following situations for scaling and speed issues:
 - A mapper for conversions between DTOs to entities
 - Auditing for database row insertions
 - automapping between DTOs and entities would be nice
+- ValidateReading takes in 4 params, would be better having a request object
 
 ## Primary keys in database
 Rather than using AccountId as the primary key, a separate int ID primary key has been added.
@@ -65,10 +70,6 @@ This is to allow correct parsing of dates regardless of environment (including w
 ## Known bugs
 - docker keeps trying to recreate the database when it already exists 
 
-## Small woopsie!
-The powerpoint wanted the POST endpoint to be in format `meter-reading-uploads`
-I didn't notice until the very end, I used MeterReadingUpload. Not much point in changing it this late, but its a simple change
-
 
 ## Ignore
 #### Ignore this section, its just helpful commands for me
@@ -76,6 +77,7 @@ migrations:
 dotnet ef migrations add InitialCreate
 
 docker help:
+
 docker-compose down -v  
 docker-compose up --build
 
